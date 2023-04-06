@@ -2,9 +2,10 @@ import express from 'express'
 const routes = express.Router()
 
 import { createUser, updateUser, deleteUser, findUser, findAllUsers, findFilterUsers, authenticationUser } from './controllers/UserControllers';
+import { checkToken } from './middlewares/checkToken';
 
 // User Routes
-routes.get('/users', findAllUsers)
+routes.get('/users', checkToken, findAllUsers)
 routes.get('/user/:id', findUser)
 routes.get('/filterUsers', findFilterUsers)
 routes.post('/auth/registerUser', createUser)
