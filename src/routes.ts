@@ -1,6 +1,13 @@
 import express from 'express'
 const routes = express.Router()
 
-routes.get('/hello', (req, res) => res.send("ola"))
+import { createUser, updateUser, deleteUser, findUser, findAllUsers } from './controllers/UserControllers';
 
-export default routes
+// User Routes
+routes.get('/users', findAllUsers)
+routes.get('/user/:id', findUser)
+routes.post('/user', createUser)
+routes.post('/user/:id', updateUser)
+routes.delete('/user/:id', deleteUser)
+
+export default routes;
