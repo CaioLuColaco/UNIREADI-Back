@@ -37,16 +37,18 @@ model UserProcess {
 }
 
 model Process {
-  id                  String      @id @default(uuid())
+  id                  String          @id @default(uuid())
   name                String
-  description         String
+  description         String?
   beginDate           DateTime
   endDate             DateTime
   vacancys            Int
   scholarships        Int
-  creator             User        @relation(fields: [creatorId], references: [id])
+  course              String
+  status              String          @default("Aberto")
+  creator             User            @relation(fields: [creatorId], references: [id])
   creatorId           String
   userProcess         UserProcess[]
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 }
