@@ -17,7 +17,7 @@ model User {
   password            String
   role                String
   course              String
-  historic            Bytes?
+  historic            String?
   userProcess         UserProcess[]
   createdProcess      Process[]
   createdAt           DateTime        @default(now())

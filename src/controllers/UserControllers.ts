@@ -9,6 +9,10 @@ export async function createUser(req: Request, res: Response) {
 
         const verification = await prisma.user.findMany({ where: {email: email}})
 
+        if(role != "student" && role != "coordinator") {
+            return res.status(400).json({status: 400, message: "Cargo inexistente!"})
+        }
+
         if(verification.length != 0) {
             return res.status(400).json({status: 400, message: "Usuário já cadastrado!"})
         }
@@ -98,3 +102,23 @@ export async function findAllUsers(req: Request, res: Response) {
         return res.status(400).json({status:400, message: error.message})
     }
 }
+
+export async function findFilterUsers(req: Request, res: Response) {
+    try {
+
+        const { course, role } = req.query
+
+        const where = {
+            ...(course && { course: { contains: course as string } }),
+            ...(role && { role: { contains: role as string } }),
+        }
+        
+        const result = await prisma.user.findMany( { where } )
+
+        return res.status(200).json(result)
+        
+    } catch (error: any) {
+        return res.status(400).json({status:400, message: error.message})
+    }
+}
+
