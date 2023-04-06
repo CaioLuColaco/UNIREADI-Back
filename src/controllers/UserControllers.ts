@@ -1,34 +1,116 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import {AUTH_SECRET_KEY} from "../config"
 
+import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export async function createUser(req: Request, res: Response) {
     try {
         const {name, email, password, role, course, historic} = req.body
 
+        // Validations
+        if(!email) {
+            return res.status(422).json({status: 422, message: "Email é um campo obrigatório!"})
+        }
+        
         const verification = await prisma.user.findMany({ where: {email: email}})
+
+        if(verification.length != 0) {
+            return res.status(400).json({status: 400, message: "Usuário já cadastrado!"})
+        }
 
         if(role != "student" && role != "coordinator") {
             return res.status(400).json({status: 400, message: "Cargo inexistente!"})
         }
 
-        if(verification.length != 0) {
-            return res.status(400).json({status: 400, message: "Usuário já cadastrado!"})
+        if(!name) {
+            return res.status(422).json({status: 422, message: "Nome é um campo obrigatório!"})
         }
+        if(!password) {
+            return res.status(422).json({status: 422, message: "Senha é um campo obrigatório!"})
+        }
+        if(!role) {
+            return res.status(422).json({status: 422, message: "Cargo é um campo obrigatório!"})
+        }
+        if(!course) {
+            return res.status(422).json({status: 422, message: "Curso é um campo obrigatório!"})
+        }
+
+        // Password Hashing
+        const salt = bcrypt.genSaltSync(10)
+        const passwordHash = bcrypt.hashSync(password, salt)
 
         const result = await prisma.user.create({
             data: {
                 name: name,
                 email: email,
                 course: course,
-                password: password,
+                password: passwordHash,
                 role: role,
                 historic: historic || ""
             }
         })
 
         return res.status(200).json(result)
+
+    } catch (error: any) {
+        return res.status(400).json({status:400, message: error.message})
+    }
+}
+
+export async function authenticationUser(req: Request, res: Response) {
+    try {
+        const {email, password} = req.body
+
+        // Validations
+        if(!email) {
+            return res.status(422).json({status: 422, message: "Email é um campo obrigatório!"})
+        }
+        
+        if(!password) {
+            return res.status(422).json({status: 422, message: "Senha é um campo obrigatório!"})
+        }
+        
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+
+        if(!user){
+            return res.status(404).json({status: 404, message: "Email ou senha incorretos!"})
+        }
+
+        // Validate the Password
+        var validation = false
+        if(email == user.email){
+            validation = bcrypt.compareSync(password, user.password)
+        }
+
+        // Return token
+        if(validation == true){
+            const secretKey: any = AUTH_SECRET_KEY
+            try {
+                const token = jwt.sign({
+                    id: user.id,
+                    name: user.name,
+                    role: user.role
+                },
+                secretKey
+                )
+
+                return res.status(200).json({message: "Usuário autenticado com sucesso!", token})
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }else{
+            return res.status(422).json({status: 422, message: "Senha invalida!"})
+        }
+            
     } catch (error: any) {
         return res.status(400).json({status:400, message: error.message})
     }
