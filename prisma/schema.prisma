@@ -40,6 +40,10 @@ model Process {
   id                  String      @id @default(uuid())
   name                String
   description         String
+  beginDate           DateTime
+  endDate             DateTime
+  vacancys            Int
+  scholarships        Int
   creator             User        @relation(fields: [creatorId], references: [id])
   creatorId           String
   userProcess         UserProcess[]
