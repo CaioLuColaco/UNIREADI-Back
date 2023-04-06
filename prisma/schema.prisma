@@ -19,6 +19,7 @@ model User {
   course              String
   historic            Bytes?
   userProcess         UserProcess[]
+  createdProcess      Process[]
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 }
@@ -39,6 +40,8 @@ model Process {
   id                  String      @id @default(uuid())
   name                String
   description         String
+  creator             User        @relation(fields: [creatorId], references: [id])
+  creatorId           String
   userProcess         UserProcess[]
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
