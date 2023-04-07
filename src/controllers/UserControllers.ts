@@ -164,7 +164,19 @@ export async function findUser(req: Request, res: Response) {
         
         const userId = req.params.id
 
-        const result = await prisma.user.findUnique({where: {id: userId}})
+        const result = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                createdProcess: true,
+                userProcess: {
+                    include: {
+                        process: true
+                    }
+                }
+            }
+        })
         
         return res.status(200).json(result)
         
@@ -176,7 +188,16 @@ export async function findUser(req: Request, res: Response) {
 export async function findAllUsers(req: Request, res: Response) {
     try {
         
-        const result = await prisma.user.findMany()
+        const result = await prisma.user.findMany({
+            include: {
+                createdProcess: true,
+                userProcess: {
+                    include: {
+                        process: true
+                    }
+                }
+            }
+        })
 
         return res.status(200).json(result)
         
@@ -195,7 +216,17 @@ export async function findFilterUsers(req: Request, res: Response) {
             ...(role && { role: { contains: role as string } }),
         }
         
-        const result = await prisma.user.findMany( { where } )
+        const result = await prisma.user.findMany( { 
+            where, 
+            include: {
+                createdProcess: true,
+                userProcess: {
+                    include: {
+                        process: true
+                    }
+                }
+            }
+        } )
 
         return res.status(200).json(result)
         
