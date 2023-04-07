@@ -109,7 +109,19 @@ export async function findProcess(req: Request, res: Response) {
         
         const processId = req.params.id
 
-        const result = await prisma.process.findUnique({where: {id: processId}})
+        const result = await prisma.process.findUnique({
+            where: {
+                id: processId
+            },
+            include: {
+                creator: true,
+                userProcess: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
         
         return res.status(200).json(result)
         
@@ -121,7 +133,16 @@ export async function findProcess(req: Request, res: Response) {
 export async function findAllProcess(req: Request, res: Response) {
     try {
         
-        const result = await prisma.process.findMany()
+        const result = await prisma.process.findMany({
+            include: {
+                creator: true,
+                userProcess: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
 
         return res.status(200).json(result)
         
@@ -140,7 +161,17 @@ export async function findFilterProcess(req: Request, res: Response) {
             ...(name && { role: { contains: name as string } }),
         }
         
-        const result = await prisma.process.findMany( { where } )
+        const result = await prisma.process.findMany( { 
+            where,
+            include: {
+                creator: true,
+                userProcess: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
 
         return res.status(200).json(result)
         
