@@ -28,7 +28,7 @@ routes.delete('/process/:id', checkCoordinatorToken, deleteProcess)
 // User Process Routes
 routes.get('/userProcess', findAllUserProcess)
 routes.get('/userProcess/:id', findUserProcess)
-routes.post('/userProcess', createUserProcess)
+routes.post('/userProcess', checkStudentToken, createUserProcess)
 routes.put('/userProcess/:id', updateUserProcess)
 routes.delete('/userProcess/:id', deleteUserProcess)
 
