@@ -1,7 +1,7 @@
 import express from 'express'
 const routes = express.Router()
 
-import { createUser, updateUser, deleteUser, findUser, findAllUsers, findFilterUsers, authenticationUser } from './controllers/UserControllers';
+import { createUser, updateUser, deleteUser, findUser, findAllUsers, findFilterUsers, authenticationUser, decodeTokenUser } from './controllers/UserControllers';
 import { createProcess, updateProcess, deleteProcess, findProcess, findAllProcess, findFilterProcess } from './controllers/ProcessControllers';
 import { createUserProcess, updateUserProcess, deleteUserProcess, findUserProcess, findAllUserProcess } from './controllers/UserProcessControllers';
 import { checkStudentToken } from './middlewares/checkStudentToken';
@@ -10,12 +10,14 @@ import { checkCoordinatorToken } from './middlewares/checkCoordinatorToken';
 
 // User Routes
 routes.get('/users', checkCoordinatorToken, findAllUsers)
-routes.get('/user/:id', checkCoordinatorToken, findUser)
+routes.get('/user/:id', findUser)
+// routes.get('/user/:id', checkCoordinatorToken, findUser)
 routes.get('/filterUsers', checkCoordinatorToken, findFilterUsers)
 routes.post('/auth/registerUser', createUser)
 routes.post('/auth/loginUser', authenticationUser)
 routes.put('/user/:id', checkUserToken, updateUser)
 routes.delete('/user/:id', checkUserToken, deleteUser)
+routes.post('/decodeToken', decodeTokenUser)
 
 // Process Routes
 routes.get('/process', findAllProcess)

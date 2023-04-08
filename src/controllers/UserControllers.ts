@@ -101,7 +101,7 @@ export async function authenticationUser(req: Request, res: Response) {
                 secretKey
                 )
 
-                return res.status(200).json({message: "Usuário autenticado com sucesso!", token})
+                return res.status(200).json({message: "Usuário autenticado com sucesso!", token: token, user: user})
 
             } catch (error) {
                 console.log(error)
@@ -227,6 +227,49 @@ export async function findFilterUsers(req: Request, res: Response) {
                 }
             }
         } )
+
+        return res.status(200).json(result)
+        
+    } catch (error: any) {
+        return res.status(400).json({status:400, message: error.message})
+    }
+}
+
+export async function decodeTokenUser(req: Request, res: Response) {
+    try {
+
+        const { token } = req.body
+
+        var dataUser: any = {}
+
+        try {
+            const secretKey: any = AUTH_SECRET_KEY
+    
+            jwt.verify(token, secretKey, (err: any, decoded: any) => {
+                if(err){
+                    console.log(err)
+                }else{
+                    dataUser = decoded
+                }
+            })
+    
+        } catch (error) {
+            return res.status(400).json({message: "Token invalido!"})
+        }
+        
+        const result = await prisma.user.findUnique({
+            where: {
+                id: dataUser.id
+            },
+            include: {
+                createdProcess: true,
+                userProcess: {
+                    include: {
+                        process: true
+                    }
+                }
+            }
+        })
 
         return res.status(200).json(result)
         
