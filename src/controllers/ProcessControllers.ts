@@ -37,13 +37,12 @@ export async function createProcess(req: Request, res: Response) {
         if(findCreator.role == "student") {
             return res.status(400).json({status: 400, message: "Um estudante não pode criar um processo seletivo!"})
         }
-
         const result = await prisma.process.create({
             data: {
                 name: name,
                 description: description || "",
-                beginDate: beginDate,
-                endDate: endDate,
+                beginDate: new Date(beginDate),
+                endDate: new Date(endDate),
                 vacancys: vacancys,
                 scholarships: scholarships,
                 course: course,
@@ -74,8 +73,8 @@ export async function updateProcess(req: Request, res: Response) {
             data: {
                 name: name || currentProcess.name ,
                 description: description || currentProcess.description,
-                beginDate: beginDate || currentProcess.beginDate,
-                endDate: endDate || currentProcess.endDate,
+                beginDate: new Date(beginDate) || currentProcess.beginDate,
+                endDate: new Date(endDate) || currentProcess.endDate,
                 vacancys: vacancys || currentProcess.vacancys,
                 scholarships: scholarships || currentProcess.scholarships,
                 course: course || currentProcess.course,
