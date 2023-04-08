@@ -64,7 +64,7 @@ export async function updateProcess(req: Request, res: Response) {
 
         const currentProcess: any = await prisma.process.findUnique({where: {id: processId}})
 
-        const {name, description, beginDate, endDate, vacancys, scholarships, course, creatorId} = req.body
+        const {name, description, beginDate, endDate, vacancys, scholarships, course, creatorId, status} = req.body
 
         const result = await prisma.process.update({
             where: {
@@ -78,7 +78,8 @@ export async function updateProcess(req: Request, res: Response) {
                 vacancys: vacancys || currentProcess.vacancys,
                 scholarships: scholarships || currentProcess.scholarships,
                 course: course || currentProcess.course,
-                creatorId: creatorId || currentProcess.creatorId
+                creatorId: creatorId || currentProcess.creatorId,
+                status: status || currentProcess.status
             }
         })
 
