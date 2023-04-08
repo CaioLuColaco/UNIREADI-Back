@@ -169,7 +169,11 @@ export async function findUser(req: Request, res: Response) {
                 id: userId
             },
             include: {
-                createdProcess: true,
+                createdProcess: {
+                    include: {
+                        userProcess: true
+                    }
+                },
                 userProcess: {
                     include: {
                         process: true

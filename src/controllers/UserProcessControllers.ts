@@ -34,7 +34,9 @@ export async function createUserProcess(req: Request, res: Response) {
         const result = await prisma.userProcess.create({
             data: {
                 userId: userId,
-                processId: processId
+                processId: processId,
+                vacancyAccept: false,
+                scholarAccept: false
             }
         })
 
@@ -51,15 +53,17 @@ export async function updateUserProcess(req: Request, res: Response) {
 
         const currentUserProcessId: any = await prisma.userProcess.findUnique({where: {id: userProcessId}})
 
-        const {userId, processId} = req.body
+        const {userId, processId, vacancyAccept, scholarAccept} = req.body
 
         const result = await prisma.userProcess.update({
             where: {
-                id: processId
+                id: userProcessId
             },
             data: {
                 userId: userId || currentUserProcessId.userId ,
                 processId: processId || currentUserProcessId.processId,
+                vacancyAccept: vacancyAccept || currentUserProcessId.vacancyAccept,
+                scholarAccept: scholarAccept || currentUserProcessId.scholarAccept
             }
         })
 
