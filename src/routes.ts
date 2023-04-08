@@ -10,8 +10,7 @@ import { checkCoordinatorToken } from './middlewares/checkCoordinatorToken';
 
 // User Routes
 routes.get('/users', checkCoordinatorToken, findAllUsers)
-routes.get('/user/:id', findUser)
-// routes.get('/user/:id', checkCoordinatorToken, findUser)
+routes.get('/user/:id', checkCoordinatorToken, findUser)
 routes.get('/filterUsers', checkCoordinatorToken, findFilterUsers)
 routes.post('/auth/registerUser', createUser)
 routes.post('/auth/loginUser', authenticationUser)

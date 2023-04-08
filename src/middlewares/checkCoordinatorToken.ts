@@ -6,6 +6,8 @@ export function checkCoordinatorToken(req: Request, res: Response, next: NextFun
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
+    const findUserId = req.params.id 
+
     if(!token) {
         return res.status(401).json({message: "Acesso negado!"})
     }
@@ -22,7 +24,7 @@ export function checkCoordinatorToken(req: Request, res: Response, next: NextFun
             }
         })
         
-        if(dataUser.role == "coordinator"){
+        if(dataUser.role == "coordinator" || dataUser.id == findUserId){
             next()
         }else{
             return res.status(400).json({status: 400, message: "Acesso não autorizado"})
